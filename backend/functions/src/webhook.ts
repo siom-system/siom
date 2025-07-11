@@ -1,8 +1,8 @@
 import {onRequest} from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 import * as logger from "firebase-functions/logger";
-import { calculateIndividualSignalScore, processSignalBuffer } from "./signalProcessor";
-import { MAX_BUFFER_SIZE, BUFFER_COLLECTION } from "./config";
+import {calculateIndividualSignalScore, processSignalBuffer} from "./signalProcessor";
+import {MAX_BUFFER_SIZE, BUFFER_COLLECTION} from "./config";
 
 export const webhookReceiver = onRequest({timeoutSeconds: 120}, async (req, res) => {
   if (req.method !== "POST") {
@@ -31,10 +31,10 @@ export const webhookReceiver = onRequest({timeoutSeconds: 120}, async (req, res)
     }
 
     const individualScore = calculateIndividualSignalScore(rawData);
-    const signalWithScore = { 
-        ...rawData, 
-        individualScore: parseFloat(individualScore.toFixed(4)),
-        receivedAt: new Date().toISOString() 
+    const signalWithScore = {
+      ...rawData,
+      individualScore: parseFloat(individualScore.toFixed(4)),
+      receivedAt: new Date().toISOString(),
     };
 
     currentBuffer.push(signalWithScore);
@@ -50,7 +50,7 @@ export const webhookReceiver = onRequest({timeoutSeconds: 120}, async (req, res)
     const processedData = await processSignalBuffer(currentBuffer);
 
     if (processedData) {
-      await db.collection("sion_cache").doc(docId).set(processedData, { merge: true });
+      await db.collection("sion_cache").doc(docId).set(processedData, {merge: true});
       logger.info(`Dados processados para ${docId} salvos no sion_cache.`);
     }
 

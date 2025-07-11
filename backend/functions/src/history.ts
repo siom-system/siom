@@ -15,7 +15,7 @@ export const getSignalHistory = onRequest({timeoutSeconds: 60}, (request, respon
         return;
       }
       let allSignals: any[] = [];
-      buffersSnapshot.forEach(doc => {
+      buffersSnapshot.forEach((doc) => {
         const data = doc.data();
         if (data.signals && Array.isArray(data.signals)) {
           allSignals = allSignals.concat(data.signals);
