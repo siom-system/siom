@@ -5,7 +5,7 @@ import SidebarClient from "./clientLayout"
 export const metadata: Metadata = {
   title: "SIOM - Sistema Integrado de Operações de Mercado",
   description: "Dashboard de análise de mercado financeiro premium",
-    generator: 'v0.dev'
+    generator: '.dev'
 }
 
 export default function RootLayout({

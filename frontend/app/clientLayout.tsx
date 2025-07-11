@@ -1,122 +1,178 @@
 "use client"
 
 import type React from "react"
-import { Inter } from "next/font/google"
-import "./globals.css"
+
+import { useState, useEffect } from "react"
+import { usePathname } from "next/navigation"
+import Link from "next/link"
+import { AuthProvider } from "@/lib/auth-context"
 import {
   BarChart3,
-  TrendingUp,
-  Coins,
+  Target,
   Shield,
   Activity,
   Settings,
   Zap,
   FileText,
-  BookOpen,
   History,
+  TrendingUp,
   Menu,
   X,
 } from "lucide-react"
-import { useState } from "react"
-import { usePathname } from "next/navigation"
 
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-inter",
-})
-
-const navigationItems = [
+const navigation = [
   { name: "Dashboard Geral", href: "/", icon: BarChart3 },
-  { name: "Dashboard Integrado", href: "/siom", icon: TrendingUp },
-  { name: "Ativos", href: "/ativos", icon: Coins },
+  { name: "SIOM", href: "/siom", icon: TrendingUp },
+  { name: "Ativos", href: "/ativos", icon: Target },
   { name: "Por Confiança", href: "/confianca", icon: Shield },
   { name: "Regimes de Mercado", href: "/regimes", icon: Activity },
   { name: "Gestão de Contexto", href: "/contexto", icon: Settings },
   { name: "Scanner de Volatilidade", href: "/scanner", icon: Zap },
   { name: "Narrativa Inteligente", href: "/narrativa", icon: FileText },
-  { name: "Guia de Análises", href: "/guia", icon: BookOpen },
-  { name: "Histórico", href: "/historico", icon: History },
+  { name: "Histórico de Sinais", href: "/historico", icon: History },
 ]
 
-function SidebarClient({ children }: { children: React.ReactNode }) {
-  const [isCollapsed, setIsCollapsed] = useState(false)
+export default function ClientLayout({ children }: { children: React.ReactNode }) {
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const pathname = usePathname()
 
+  // Fechar sidebar ao navegar (mobile)
+  useEffect(() => {
+    setSidebarOpen(false)
+  }, [pathname])
+
   return (
-    <div className={`${inter.variable} font-sans bg-slate-950 text-slate-100 min-h-screen`}>
-      <div className="flex h-screen overflow-hidden">
-        {/* Sidebar */}
-        <div
-          className={`${isCollapsed ? "w-20" : "w-72"} bg-gradient-to-b from-slate-900 to-slate-950 border-r border-slate-800/50 transition-all duration-300 ease-in-out shadow-2xl`}
-        >
-          <div className="flex flex-col h-full">
-            {/* Logo/Title */}
-            <div className="p-6 border-b border-slate-800/50 backdrop-blur-sm">
-              <div className="flex items-center justify-between">
-                <div className={`${isCollapsed ? "opacity-0 w-0" : "opacity-100"} transition-all duration-300`}>
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
-                    SIOM
-                  </h1>
-                  <p className="text-sm text-slate-400 mt-1 font-light">Sistema Integrado de Operações</p>
+    <AuthProvider>
+      <div className="min-h-screen bg-slate-900 text-slate-100">
+        {/* Sidebar Desktop */}
+        <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+          <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-slate-800/50 px-6 pb-4 backdrop-blur-sm border-r border-slate-700/50">
+            {/* Logo */}
+            <div className="flex h-16 shrink-0 items-center">
+              <div className="flex items-center">
+                <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center mr-3">
+                  <BarChart3 className="w-5 h-5 text-white" />
                 </div>
-                <button
-                  onClick={() => setIsCollapsed(!isCollapsed)}
-                  className="p-2 rounded-xl bg-slate-800/50 hover:bg-slate-700/50 transition-all duration-200 hover:scale-105"
-                >
-                  {isCollapsed ? <Menu className="w-5 h-5" /> : <X className="w-5 h-5" />}
-                </button>
+                <div>
+                  <h1 className="text-xl font-bold text-slate-100">SIOM</h1>
+                  <p className="text-xs text-slate-400">Sistema Inteligente</p>
+                </div>
               </div>
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 p-4 space-y-2">
-              {navigationItems.map((item, index) => {
-                const Icon = item.icon
-                const isActive = pathname === item.href
-                return (
-                  <div key={item.name} className="animate-fade-in-up" style={{ animationDelay: `${index * 50}ms` }}>
-                    <a
-                      href={item.href}
-                      className={`group flex items-center px-4 py-3 rounded-2xl text-sm font-medium transition-all duration-200 ${
-                        isActive
-                          ? "bg-gradient-to-r from-emerald-500/20 to-teal-500/20 text-emerald-400 border border-emerald-500/30 shadow-lg shadow-emerald-500/10"
-                          : "text-slate-300 hover:bg-slate-800/50 hover:text-emerald-400 hover:scale-[1.02] hover:shadow-lg"
-                      }`}
-                    >
-                      <Icon
-                        className={`${isCollapsed ? "w-6 h-6" : "w-5 h-5 mr-3"} transition-all duration-200 group-hover:scale-110`}
-                      />
-                      <span
-                        className={`${isCollapsed ? "opacity-0 w-0" : "opacity-100"} transition-all duration-300 truncate`}
-                      >
-                        {item.name}
-                      </span>
-                    </a>
-                  </div>
-                )
-              })}
+            <nav className="flex flex-1 flex-col">
+              <ul role="list" className="flex flex-1 flex-col gap-y-7">
+                <li>
+                  <ul role="list" className="-mx-2 space-y-1">
+                    {navigation.map((item) => {
+                      const isActive = pathname === item.href
+                      return (
+                        <li key={item.name}>
+                          <Link
+                            href={item.href}
+                            className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all duration-200 ${
+                              isActive
+                                ? "bg-emerald-500/10 text-emerald-400 border-r-2 border-emerald-500"
+                                : "text-slate-300 hover:text-emerald-400 hover:bg-slate-700/50"
+                            }`}
+                          >
+                            <item.icon
+                              className={`h-5 w-5 shrink-0 transition-colors duration-200 ${
+                                isActive ? "text-emerald-400" : "text-slate-400 group-hover:text-emerald-400"
+                              }`}
+                              aria-hidden="true"
+                            />
+                            {item.name}
+                          </Link>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </li>
+              </ul>
             </nav>
-
-            {/* Footer */}
-            <div className="p-4 border-t border-slate-800/50">
-              <div className={`${isCollapsed ? "opacity-0" : "opacity-100"} transition-all duration-300`}>
-                <div className="text-xs text-slate-500 text-center">
-                  <p>© 2024 SIOM Platform</p>
-                  <p className="mt-1">v2.1.0</p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="flex-1 overflow-auto bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-          <main className="p-8">{children}</main>
+        {/* Mobile sidebar */}
+        <div className={`lg:hidden ${sidebarOpen ? "relative z-50" : ""}`}>
+          {sidebarOpen && (
+            <>
+              {/* Backdrop */}
+              <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
+
+              {/* Sidebar */}
+              <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-slate-800/95 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-slate-700/50 backdrop-blur-sm">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center mr-3">
+                      <BarChart3 className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h1 className="text-xl font-bold text-slate-100">SIOM</h1>
+                      <p className="text-xs text-slate-400">Sistema Inteligente</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="-m-2.5 rounded-md p-2.5 text-slate-400 hover:text-slate-300"
+                    onClick={() => setSidebarOpen(false)}
+                  >
+                    <X className="h-6 w-6" aria-hidden="true" />
+                  </button>
+                </div>
+                <nav className="mt-6">
+                  <ul role="list" className="space-y-1">
+                    {navigation.map((item) => {
+                      const isActive = pathname === item.href
+                      return (
+                        <li key={item.name}>
+                          <Link
+                            href={item.href}
+                            className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all duration-200 ${
+                              isActive
+                                ? "bg-emerald-500/10 text-emerald-400 border-r-2 border-emerald-500"
+                                : "text-slate-300 hover:text-emerald-400 hover:bg-slate-700/50"
+                            }`}
+                          >
+                            <item.icon
+                              className={`h-5 w-5 shrink-0 transition-colors duration-200 ${
+                                isActive ? "text-emerald-400" : "text-slate-400 group-hover:text-emerald-400"
+                              }`}
+                              aria-hidden="true"
+                            />
+                            {item.name}
+                          </Link>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </nav>
+              </div>
+            </>
+          )}
         </div>
+
+        {/* Mobile header */}
+        <div className="sticky top-0 z-40 flex items-center gap-x-6 bg-slate-800/50 px-4 py-4 shadow-sm sm:px-6 lg:hidden backdrop-blur-sm border-b border-slate-700/50">
+          <button
+            type="button"
+            className="-m-2.5 p-2.5 text-slate-400 hover:text-slate-300 lg:hidden"
+            onClick={() => setSidebarOpen(true)}
+          >
+            <Menu className="h-6 w-6" aria-hidden="true" />
+          </button>
+          <div className="flex-1 text-sm font-semibold leading-6 text-slate-100">
+            {navigation.find((item) => item.href === pathname)?.name || "SIOM"}
+          </div>
+        </div>
+
+        {/* Main content */}
+        <main className="lg:pl-72">
+          <div className="px-4 py-6 sm:px-6 lg:px-8">{children}</div>
+        </main>
       </div>
-    </div>
+    </AuthProvider>
   )
 }
-
-export default SidebarClient
