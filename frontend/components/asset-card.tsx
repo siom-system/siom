@@ -1,59 +1,50 @@
+// @/frontend/components/asset-card.tsx
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { ProcessedAsset } from "@/lib/types"; // Importamos nosso tipo de dado
+import { cn } from "@/lib/utils"; // Utilitário para classes condicionais
+
+// Define que este componente espera receber um objeto 'asset'
 interface AssetCardProps {
-  ticker: string
-  timeframe: string
-  finalScore: number
-  confidence: number
+  asset: ProcessedAsset;
 }
 
-export default function AssetCard({ ticker, timeframe, finalScore, confidence }: AssetCardProps) {
-  // Função para determinar a cor do score final
-  const getScoreColor = (score: number) => {
-    return score > 0 ? "text-green-400" : "text-red-400"
-  }
-
-  // Função para determinar a cor da confiança
-  const getConfidenceColor = (conf: number) => {
-    const percentage = conf * 100
-    if (percentage >= 75) return "text-green-400"
-    if (percentage >= 50) return "text-yellow-400"
-    return "text-red-400"
-  }
+export function AssetCard({ asset }: AssetCardProps) {
+  // Extrai o ticker e o timeframe do ID do documento
+  const [ticker, timeframe] = asset.id.split('_');
 
   return (
-    <div className="bg-gray-800 rounded-lg p-6 shadow-lg border border-gray-700 hover:ring-2 hover:ring-cyan-500 hover:border-cyan-500/50 transition-all duration-200 hover:scale-[1.02]">
-      {/* Cabeçalho */}
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold text-cyan-400">{ticker}</h3>
-        <span className="text-sm text-gray-400 bg-gray-700 px-2 py-1 rounded">{timeframe}</span>
-      </div>
-
-      {/* Corpo */}
-      <div className="space-y-3">
-        {/* Score Final */}
-        <div className="flex justify-between items-center">
-          <span className="text-gray-300 text-sm">Score Final:</span>
-          <span className={`font-bold text-lg ${getScoreColor(finalScore)}`}>
-            {finalScore > 0 ? "+" : ""}
-            {finalScore.toFixed(2)}
-          </span>
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-sm font-medium">{ticker} - {timeframe}</CardTitle>
+        {/* Placeholder para um ícone de ativo */}
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-muted-foreground"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
+      </CardHeader>
+      <CardContent>
+        <div className="flex items-baseline gap-2">
+          <span className="text-xs text-muted-foreground">Score Final:</span>
+          {/* Lógica de cor dinâmica para o Score */}
+          <div className={cn(
+            "text-2xl font-bold",
+            asset.finalScore > 0 ? "text-green-500" : asset.finalScore < 0 ? "text-red-500" : ""
+          )}>
+            {asset.finalScore.toFixed(2)}
+          </div>
         </div>
 
-        {/* Confiança */}
-        <div className="flex justify-between items-center">
-          <span className="text-gray-300 text-sm">Confiança:</span>
-          <span className={`font-bold text-lg ${getConfidenceColor(confidence)}`}>
-            {(confidence * 100).toFixed(0)}%
-          </span>
+        <div className="flex items-baseline gap-2 mt-1">
+          <span className="text-xs text-muted-foreground">Confiança:</span>
+           {/* Lógica de cor dinâmica para a Confiança */}
+          <div className={cn(
+            "text-lg font-semibold",
+            asset.confidence >= 80 ? "text-green-500" : asset.confidence >= 65 ? "text-yellow-500" : "text-gray-500"
+          )}>
+            {asset.confidence}%
+          </div>
         </div>
-      </div>
-
-      {/* Indicador visual adicional */}
-      <div className="mt-4 pt-3 border-t border-gray-700">
-        <div className="flex items-center justify-center">
-          <div className={`w-3 h-3 rounded-full ${finalScore > 0 ? "bg-green-400" : "bg-red-400"} animate-pulse`}></div>
-          <span className="ml-2 text-xs text-gray-400">{finalScore > 0 ? "Bullish" : "Bearish"}</span>
-        </div>
-      </div>
-    </div>
-  )
+        <p className="text-xs text-muted-foreground mt-2">
+          Estado: {asset.estado}
+        </p>
+      </CardContent>
+    </Card>
+  );
 }

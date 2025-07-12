@@ -1,26 +1,36 @@
-import type React from "react"
-import type { Metadata } from "next"
-import SidebarClient from "./clientLayout"
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
+import { SionDataProvider } from "@/context/SionDataProvider"; // <-- NOSSA IMPORTAÇÃO
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "SIOM - Sistema Integrado de Operações de Mercado",
-  description: "Dashboard de análise de mercado financeiro premium",
-    generator: '.dev'
-}
+  title: "SIOM",
+  description: "Sistema Integrado de Operações de Mercado",
+};
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode
-}) {
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html lang="pt-BR">
-      <body>
-        <SidebarClient>{children}</SidebarClient>
+    <html lang="pt-br" suppressHydrationWarning>
+      <body className={inter.className}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {/* A MUDANÇA ESTÁ AQUI: ENVOLVEMOS TUDO COM O PROVEDOR DE DADOS */}
+          <SionDataProvider>
+            {children}
+          </SionDataProvider>
+        </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }
-
-
-import './globals.css'
