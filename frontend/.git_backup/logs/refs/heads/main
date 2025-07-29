@@ -1,4 +1,0 @@
-0000000000000000000000000000000000000000 2affac2ce1b93e3b012c46f8e7c284a0d58e6627 deluca.ciklus <deluca.ciklus@gmail.com> 1751697554 +0000	clone: from https://github.com/siom-system/siom.git
-2affac2ce1b93e3b012c46f8e7c284a0d58e6627 8e701990bf34495600315b100a6c3aed0ac5915a deluca.ciklus <deluca.ciklus@gmail.com> 1751699963 +0000	commit: feat: Frontend v0 implementado e integrado com API backend
-8e701990bf34495600315b100a6c3aed0ac5915a fe9f9c067f483054539ac01b042260250d25bef0 deluca.ciklus <deluca.ciklus@gmail.com> 1751987364 +0000	commit: feat: Finaliza Motor de Lógica e implementa UI inicial do Histórico
-fe9f9c067f483054539ac01b042260250d25bef0 9036371895ee7014e411735340dd0a2de0b0a8fb deluca.ciklus <deluca.ciklus@gmail.com> 1752180777 +0000	commit: feat(project): Finaliza configuração do monorepo backend e frontend
